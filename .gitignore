@@ -1,0 +1,51 @@
+# Build artifacts
+bin/
+obj/
+
+# User-specific files
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs
+*.log
+
+# IIS related
+.vs/
+.idea/
+.ionide/
+
+# Environment and secrets
+.env
+secrets.json
+
+# Visual Studio Code
+.vscode/
+
+# NuGet packages
+*.nupkg
+*.snupkg
+packages/
+
+# ASP.NET Core runtime artifacts
+wwwroot/dist/
+wwwroot/node_modules/
+node_modules/
+
+# Database files
+*.db
+*.sqlite
+*.bak
+*.mdf
+*.ldf
+
+# Temporary files
+*.tmp
+*.temp
+*.pid
+*.log
+
+# Lock files
+project.lock.json
+package-lock.json
+yarn.lock
