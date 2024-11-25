@@ -1,11 +1,10 @@
-﻿
-using RestaurantWeb.Controllers;
+﻿using Microsoft.Extensions.Logging;
 
 namespace RestaurantWeb.Helpers
 {
     public static class Log 
     {
-        private static ILogger _logger;
+        private static ILogger? _logger;
 
         public static void Configure(ILogger logger)
         {

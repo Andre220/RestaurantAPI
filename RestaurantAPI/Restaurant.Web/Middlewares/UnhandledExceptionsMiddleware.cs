@@ -1,16 +1,15 @@
-﻿using System.Net;
+﻿using RestaurantWeb.Helpers;
+using System.Net;
 
 namespace RestaurantWeb.Middlewares
 {
     public class UnhandledExceptionsMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly ILogger<UnhandledExceptionsMiddleware> _logger;
 
-        public UnhandledExceptionsMiddleware(RequestDelegate next, ILogger<UnhandledExceptionsMiddleware> logger)
+        public UnhandledExceptionsMiddleware(RequestDelegate next)
         {
             _next = next;
-            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -21,7 +20,7 @@ namespace RestaurantWeb.Middlewares
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Erro: {ex.Message}");
+                Log.LogError($"Erro: {ex.Message}");
                 await HandleExceptionAsync(context, ex);
             }
         }
@@ -32,7 +31,7 @@ namespace RestaurantWeb.Middlewares
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             return context.Response.WriteAsync(new
             {
-                StatusCode = context.Response.StatusCode,
+                context.Response.StatusCode,
                 Message = "Ocorreu um erro interno no servidor."
             }.ToString());
         }
