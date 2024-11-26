@@ -1,4 +1,4 @@
-[# Restaurant API
+# Restaurant API
 
 Uma API para gerenciar pedidos de clientes em um restaurante. Desenvolvida utilizando .NET Core, com arquitetura limpa, boas práticas de organização de código e testes unitários planejados.
 
