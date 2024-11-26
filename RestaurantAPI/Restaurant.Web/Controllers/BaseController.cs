@@ -8,12 +8,16 @@ namespace Restaurant.Web.Controllers
 {
     public class BaseController : ControllerBase
     {
-        private readonly IConfiguration _configuration;
+        protected readonly IConfiguration _configuration;
 
         public BaseController(IConfiguration configuration)
         {
             _configuration = configuration;
         }
+
+        //public BaseController()
+        //{
+        //}
 
         protected User GetAuthenticatedUser()
         {

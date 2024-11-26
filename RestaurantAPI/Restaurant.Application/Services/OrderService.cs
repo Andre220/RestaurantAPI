@@ -92,6 +92,7 @@ namespace Restaurant.Application.Services
                 order.OrderItems.Add(orderItem);
                 order.TotalPriceCents += menuItem.PriceCents * item.Quantity;
             }
+
             await _orderRepository.AddAsync(order);
             await _orderRepository.SaveChangesAsync();
 

@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -10,6 +12,7 @@ using Restaurant.Repository.DBContext;
 using Restaurant.Repository.Repositories;
 using Restaurant.Repository.Repositories.Interfaces;
 using RestaurantWeb.Middlewares;
+using System.Reflection;
 
 namespace RestaurantWeb
 {
@@ -80,7 +83,13 @@ namespace RestaurantWeb
 
         static void ConfigureCoreServices(IServiceCollection services)
         {
-            services.AddControllers();
+            services.AddValidatorsFromAssembly(Assembly.Load("Restaurant.Shared"));
+            services.AddControllers()
+                .ConfigureApiBehaviorOptions(options =>
+                 {
+                     options.SuppressModelStateInvalidFilter = true;
+                 });
+
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen(c =>
             {

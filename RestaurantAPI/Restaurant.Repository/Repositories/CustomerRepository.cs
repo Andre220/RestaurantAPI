@@ -14,10 +14,23 @@ namespace Restaurant.Repository.Repositories
             _context = context;
         }
 
-        public async Task<IEnumerable<Customer>> ListAsync()
+        public async Task<IEnumerable<Customer>> ListAllAsync()
         {
             return await _context.Customers.ToListAsync();
         }
+
+        public async Task<(IEnumerable<Customer>, int)> ListAsync(int pageNumber, int pageSize)
+        {
+            var totalRecords = await _context.Customers.CountAsync();
+            var customers = await _context.Customers
+                .OrderBy(c => c.LastName)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return (customers, totalRecords);
+        }
+
 
         public async Task<Customer> GetByIdAsync(Guid id)
         {

@@ -6,6 +6,8 @@ using Restaurant.Domain.Identity;
 using Restaurant.Domain.Models;
 using Restaurant.Repository.DBContext;
 using Restaurant.Shared.DTOs.Orders;
+using Restaurant.Shared.Resources;
+using Restaurant.Web.Models;
 using RestaurantWeb.Helpers;
 
 namespace Restaurant.Web.Controllers
@@ -29,12 +31,12 @@ namespace Restaurant.Web.Controllers
             {
                 var result = await _service.CreateAsync(createOrderDto);
 
-                return Ok(result);
+                return Ok(ApiResult.SuccessResult(result));
             }
             catch(Exception ex)
             {
                 Log.LogError(ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(ApiResult.ErrorResult(ex.Message));
             }
         }
 
@@ -45,12 +47,12 @@ namespace Restaurant.Web.Controllers
             {
                 var result = await _service.GetByIdAsync(id);
 
-                return Ok(result);
+                return Ok(ApiResult.SuccessResult(result));
             }
             catch (Exception ex)
             {
                 Log.LogError(ex.Message);
-                return BadRequest(ex.Message);
+                return BadRequest(ApiResult.ErrorResult(GlobalResource.GenericErrorMessage, ex.Message));
             }
         }
     }

@@ -47,6 +47,24 @@ namespace Restaurant.Application.Services
             return new MenuItemDto(menuItem);
         }
 
+        public async Task<IEnumerable<MenuItemDto>> CreateMultipleAsync(IEnumerable<CreateMenuItemDTO> menuItemsDTO)
+        {
+            var menuItems = menuItemsDTO.Select(item => new MenuItem
+            {
+                Id = Guid.NewGuid(),
+                Name = item.Name,
+                PriceCents = item.PriceCents
+            }).ToList();
+
+            await _repository.AddRangeAsync(menuItems);
+
+            await _repository.SaveChangesAsync();
+
+            var result = menuItems.Select(item => new MenuItemDto(item)).ToList();
+
+            return result;
+        }
+
         public async Task<MenuItemDto> UpdateAsync(UpdateMenuItemDTO menuItemDTO)
         {
             var menuItem = await _repository.GetByIdAsync(menuItemDTO.Id);

@@ -7,6 +7,7 @@ namespace Restaurant.Application.Interfaces
         Task<IEnumerable<MenuItemDto>> ListAsync();
         Task<MenuItemDto> GetByIdAsync(Guid id);
         Task<MenuItemDto> CreateAsync(CreateMenuItemDTO menuItemDTO);
+        Task<IEnumerable<MenuItemDto>> CreateMultipleAsync(IEnumerable<CreateMenuItemDTO> menuItemDTO);
         Task<MenuItemDto> UpdateAsync(UpdateMenuItemDTO menuItemDTO);
         Task DeleteAsync(Guid id);
     }

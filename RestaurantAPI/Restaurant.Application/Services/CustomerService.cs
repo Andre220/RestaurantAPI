@@ -1,6 +1,8 @@
 ﻿using Restaurant.Application.Interfaces;
 using Restaurant.Domain.Models;
+using Restaurant.Repository.Repositories;
 using Restaurant.Repository.Repositories.Interfaces;
+using Restaurant.Shared.DTOs.Common;
 using Restaurant.Shared.DTOs.Customers;
 
 namespace Restaurant.Application.Services
@@ -14,10 +16,21 @@ namespace Restaurant.Application.Services
             _repository = repository;
         }
 
-        public async Task<IEnumerable<CustomerDto>> ListAsync()
+        public async Task<IEnumerable<CustomerDto>> ListAllAsync()
         {
-            var customers = await _repository.ListAsync();
+            var customers = await _repository.ListAllAsync();
             return customers.Select(c => new CustomerDto(c));
+        }
+
+        public async Task<PaginatedResult<CustomerDto>> ListAsync(int pageNumber, int pageSize)
+        {
+            var (customers, totalRecords) = await _repository.ListAsync(pageNumber, pageSize);
+
+            return new PaginatedResult<CustomerDto>(
+                customers.Select(c => new CustomerDto(c)),
+                totalRecords,
+                pageNumber,
+                pageSize);
         }
 
         public async Task<CustomerDto> GetByIdAsync(Guid id)

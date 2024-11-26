@@ -1,4 +1,5 @@
-﻿using Restaurant.Domain.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Restaurant.Domain.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,6 +13,7 @@ namespace Restaurant.Repository.Repositories.Interfaces
         Task<IEnumerable<MenuItem>> ListAsync();
         Task<MenuItem> GetByIdAsync(Guid id);
         Task AddAsync(MenuItem menuItem);
+        Task AddRangeAsync(IEnumerable<MenuItem> menuItems);
         Task UpdateAsync(MenuItem menuItem);
         Task DeleteAsync(MenuItem menuItem);
         Task SaveChangesAsync();

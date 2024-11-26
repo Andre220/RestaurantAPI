@@ -9,7 +9,8 @@ namespace Restaurant.Repository.Repositories.Interfaces
 {
     public interface ICustomerRepository
     {
-        Task<IEnumerable<Customer>> ListAsync();
+        Task<IEnumerable<Customer>> ListAllAsync();
+        Task<(IEnumerable<Customer>, int)> ListAsync(int pageNumber, int pageSize);
         Task<Customer> GetByIdAsync(Guid id);
         Task<Customer> GetByPhoneNumberAsync(string phoneNumber);
         Task AddAsync(Customer customer);

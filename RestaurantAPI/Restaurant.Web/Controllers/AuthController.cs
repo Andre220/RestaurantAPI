@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Restaurant.Domain.Identity;
 using Restaurant.Shared.DTOs.Auth;
+using Restaurant.Shared.Resources;
+using Restaurant.Web.Models;
+using RestaurantWeb.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 
@@ -24,50 +27,67 @@ namespace Restaurant.Web.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
         {
-            var user = new User 
-            { 
-                UserName = dto.Email, 
-                Email = dto.Email,
-                FirstName = dto.FirstName,
-                LastName = dto.LastName,
-                PhoneNumber = dto.PhoneNumber,
-            };
-            var result = await _userManager.CreateAsync(user, dto.Password);
+            try
+            {
+                var user = new User
+                {
+                    UserName = dto.Email,
+                    Email = dto.Email,
+                    FirstName = dto.FirstName,
+                    LastName = dto.LastName,
+                    PhoneNumber = dto.PhoneNumber,
+                };
 
-            if (!result.Succeeded) 
-                return BadRequest(result.Errors);//TODO: Replace for APIResult
+                var result = await _userManager.CreateAsync(user, dto.Password);
 
-            return Ok(new { message = "User registered successfully" });
+                if (!result.Succeeded)
+                    return BadRequest(ApiResult.ErrorResult(result.Errors.Select(x => x.Description)));
+
+                return Ok(ApiResult.SuccessResult(GlobalResource.SuccessRegisterUser));
+            }
+            catch (Exception ex)
+            {
+                Log.LogError(ex.Message);
+                return BadRequest(ApiResult.ErrorResult(ex.Message));
+            }
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         {
-            var currentUser = await _userManager.FindByEmailAsync(dto.Email);
-
-            if (currentUser == null || !await _userManager.CheckPasswordAsync(currentUser, dto.Password))
-                return Unauthorized();
-
-            var authClaims = new[]
+            try
             {
-                new System.Security.Claims.Claim(JwtRegisteredClaimNames.Sub, currentUser.Email),
-                new System.Security.Claims.Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            };
+                var currentUser = await _userManager.FindByEmailAsync(dto.Email);
 
-            var token = GenerateJwtToken(currentUser);
+                if (currentUser == null || !await _userManager.CheckPasswordAsync(currentUser, dto.Password))
+                    return Unauthorized();
 
-            //TODO: Criar o attribute que appenda ao cookie o JWT e que lê do JWT quando uma action é chamada.
-            var cookieOptions = new CookieOptions
+                var authClaims = new[]
+                {
+                    new System.Security.Claims.Claim(JwtRegisteredClaimNames.Sub, currentUser.Email),
+                    new System.Security.Claims.Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+                };
+
+                var token = GenerateJwtToken(currentUser);
+
+                //TODO: Criar o attribute que appenda ao cookie o JWT e que lê do JWT quando uma action é chamada.
+                var cookieOptions = new CookieOptions
+                {
+                    HttpOnly = true,
+                    Secure = true,
+                    SameSite = SameSiteMode.Strict,  // Previne CSRF
+                    Expires = DateTime.UtcNow.AddHours(1) // Duração do cookie
+                };
+
+                Response.Cookies.Append("JwtToken", token, cookieOptions);
+
+                return Ok(ApiResult.SuccessResult(token));
+            }
+            catch(Exception ex)
             {
-                HttpOnly = true,
-                Secure = true,
-                SameSite = SameSiteMode.Strict,  // Previne CSRF
-                Expires = DateTime.UtcNow.AddHours(1) // Duração do cookie
-            };
-
-            Response.Cookies.Append("JwtToken", token, cookieOptions);
-
-            return Ok(new {message  = "Login bem-sucedido!", token = token});
+                Log.LogError(ex.Message);
+                return BadRequest(ApiResult.ErrorResult(ex.Message));
+            }
         }
 
         private string GenerateJwtToken(User user)

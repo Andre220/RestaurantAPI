@@ -34,6 +34,10 @@ namespace Restaurant.Repository.Repositories
             await _context.MenuItems.AddAsync(menuItem); // Adiciona novo MenuItem
         }
 
+        public async Task AddRangeAsync(IEnumerable<MenuItem> menuItems)
+        {
+            await _context.MenuItems.AddRangeAsync(menuItems);
+        }
         public async Task UpdateAsync(MenuItem menuItem)
         {
             _context.MenuItems.Update(menuItem); // Atualiza MenuItem existente
